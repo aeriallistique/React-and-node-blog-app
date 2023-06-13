@@ -10,16 +10,19 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const uploadMiddleware = multer({dest: 'uploads/'});
 const fs = require('fs');
-require('dotenv').config();
+const dotenv = require('dotenv');
+
+dotenv.config({path: '../config.env'});
 
 const salt = 10;
-const secret = proces.env.SECRET;
+const secret = process.env.SECRET;
 
 app.use(cors({credentials:true, origin: 'http://localhost:3000'}));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname +'/uploads'));
 
-mongoose.connect(process.env.DATABASE_ADDRESS);
+mongoose.connect(process.env.MONGODB_URI);
 
 app.post('/register', async(req, res)=>{
   const {username, password} = req.body;
@@ -79,21 +82,34 @@ app.post('/post', uploadMiddleware.single('file') , async (req, res)=>{
   const extensionName = parts[parts.length -1];
   const newPath = path +'.'+extensionName;
   fs.renameSync(path, newPath);
-  
-  const {title, summary, content} = req.body;
-  const postDocument = await Post.create({
-    title,
-    summary,
-    content,
-    coverImage: newPath,
-  });
 
-  res.json(postDocument);
+  const {token} = req.cookies;
+  jwt.verify(token, secret, {}, async(err, info)=>{
+    if(err) throw err;
+    const {title, summary, content} = req.body;
+    const postDocument = await Post.create({
+      title,
+      summary,
+      content, 
+      coverImage: newPath,
+      author: info.id
+    });
+    res.json(postDocument);
+  })
 })
 
 app.get('/post', async(req , res)=>{
-  const posts = await Post.find();
+  const posts = await Post.find()
+                          .populate('author', ['username'])
+                          .sort({createdAt: -1})
+                          .limit(20 );
   res.json(posts);
+})
+
+app.get('/post/:id', async (req, res)=>{
+  const {id} = req.params;
+  const docInfo = await Post.findById(id).populate('author', ['username']);
+  res.json(docInfo)
 })
 
 app.listen(4000);

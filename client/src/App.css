@@ -57,6 +57,15 @@ header nav {
   font-size: 1.8rem;
 }
 
+.post .text a{
+  text-decoration: none;
+  color: inherit;
+}
+.post .text a:hover{
+  text-decoration: underline;
+  color: black;
+}
+
 .post .info{
   margin: 6px 0;
   color: #888;
@@ -67,12 +76,24 @@ header nav {
 }
 
 .post .info .author{
+  cursor:pointer;
   color: #333;
 }
 
 .post .summary{
   margin: 10px 0;
   line-height: 1.4rem;
+}
+
+.post-page .postImage{
+  max-height: 200px;
+  max-width: 200px;
+  overflow: hidden;
+}
+
+.post-page .postImage img{
+  object-fit: contain;
+  object-position: center;
 }
 
 form.login, form.register{

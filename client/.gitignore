@@ -23,6 +23,3 @@ yarn-debug.log*
 yarn-error.log*
 
 //user: oriceaco  fBZJY6B12hQYFFuq
-
-SECRET=ucuhdidwdjww0
-DATABASE_ADDRESS=mongodb+srv://oriceaco:fBZJY6B12hQYFFuq@cluster-mern-project.ki4wkmf.mongodb.net/
