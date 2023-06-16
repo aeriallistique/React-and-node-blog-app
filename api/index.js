@@ -11,6 +11,8 @@ const multer = require('multer');
 const uploadMiddleware = multer({dest: 'uploads/'});
 const fs = require('fs');
 const dotenv = require('dotenv');
+const { redirect } = require('express/lib/response');
+
 
 dotenv.config({path: '../config.env'});
 
@@ -32,12 +34,10 @@ app.post('/register', async(req, res)=>{
     username, 
     password: bcrypt.hashSync(password, salt)
     })
-
     res.json(userDoc);
   } catch (err) {
     res.status(400).json(err)
   }
-  
 })
 
 app.post('/login', async (req, res)=>{
@@ -57,7 +57,6 @@ app.post('/login', async (req, res)=>{
   }else{
     res.status(400).json('Wrong credentials.')
   }
-
 })
 
 app.get('/profile', (req, res)=>{
@@ -66,14 +65,12 @@ app.get('/profile', (req, res)=>{
   jwt.verify(token, secret, {}, (err, info)=>{
     if(err) throw err;
       res.json(info);
-
   })
-
-
 })
 
-app.post('/logout', (req, res)=>{
+app.get('/logout', async(req, res)=>{
   res.cookie('token', '').json('ok');
+  
 })
 
 app.post('/post', uploadMiddleware.single('file') , async (req, res)=>{

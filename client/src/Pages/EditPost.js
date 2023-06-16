@@ -18,7 +18,6 @@ export default  function EditPost(){
         setTitle(postInfo.title);
         setSummary(postInfo.summary);
         setContent(postInfo.content)
-
     })
     })
   }, [])
